@@ -14,7 +14,7 @@ from ttkwidgets.autocomplete import AutocompleteCombobox
 import database as db
 import Limiting_Reactant as lr
 import pymysql
-
+#from Stoichiometry import ChemicalEquationBalancer
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("blue")
 
@@ -87,7 +87,7 @@ def tabLimitingReactants(tabN,lbl):
             chemical_formula, molecular_weight = fetchChemicalDetails(cursor, selected_name)
             cboCompoundAF.set(chemical_formula)
             txtCompoundAWeight.delete(0, END)
-            txtCompoundAWeight.insert(0, str(molecular_weight))
+            #txtCompoundAWeight.insert(0, str(molecular_weight))
             cursor.close()
             connection.close()
 
@@ -102,7 +102,7 @@ def tabLimitingReactants(tabN,lbl):
             chemical_formula, molecular_weight = fetchChemicalDetails(cursor, selected_name)
             cboCompoundBF.set(chemical_formula)
             txtCompoundBWeight.delete(0, END)
-            txtCompoundBWeight.insert(0, str(molecular_weight))
+            #txtCompoundBWeight.insert(0, str(molecular_weight))
             cursor.close()
             connection.close()
 
@@ -121,6 +121,13 @@ def tabLimitingReactants(tabN,lbl):
         unit_b = cboCompoundBUnits.get().strip()
         coeff_b = float(txtCompoundBCoefficient.get().strip())
 
+        #balancer = ChemicalEquationBalancer(
+        #    compound_a, compound_b, product_c, product_d,
+        #)
+
+        #coefficients = balancer.find_coefficients()
+        #coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
+
         # Call LimitingReactant
         calculator = lr.LimitingReactant(
             compound_a, weight_a, unit_a, coeff_a,
@@ -128,7 +135,7 @@ def tabLimitingReactants(tabN,lbl):
         )
 
         # Find the limiting reactant
-        limiting = calculator.find_limiting_reactant(weight_a,weight_b)
+        limiting = calculator.find_limiting_reactant()
         if limiting:
             result = f"The limiting reactant is: {limiting}"
             lblOutput.configure(text=result)
@@ -188,7 +195,7 @@ def tabLimitingReactants(tabN,lbl):
     cboCompoundBUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"],width=300,dropdown_font=("Helvetica",19))
     cboCompoundBUnits.pack()
 
-    lblCompoundBCoefficient = customtkinter.CTkLabel(tabN, text="Compound A Coefficient", font=("Helvetica", 15))
+    lblCompoundBCoefficient = customtkinter.CTkLabel(tabN, text="Compound B Coefficient", font=("Helvetica", 15))
     lblCompoundBCoefficient.pack()
     txtCompoundBCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
     txtCompoundBCoefficient.pack()
