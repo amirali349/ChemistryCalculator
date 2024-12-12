@@ -16,6 +16,7 @@ import Expected_Yield as ey
 import database as db
 import pymysql
 import database as db
+from Stoichiometry import ChemicalEquationBalancer
 
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("blue")
@@ -68,12 +69,12 @@ def tabExpectedYieldModules(tabN, lbl):
         """Resets combobox and textboxes"""
         txtCompoundAWeight.delete(0, END)
         txtCompoundBWeight.delete(0, END)
-        txtCompoundCWeight.delete(0, END)
-        txtCompoundDWeight.delete(0, END)
-        txtCompoundACoefficient.delete(0, END)
-        txtCompoundBCoefficient.delete(0, END)
-        txtProductCCoefficient.delete(0, END)
-        txtProductDCoefficient.delete(0, END)
+        #txtCompoundCWeight.delete(0, END)
+        #txtCompoundDWeight.delete(0, END)
+        #txtCompoundACoefficient.delete(0, END)
+        #txtCompoundBCoefficient.delete(0, END)
+        #txtProductCCoefficient.delete(0, END)
+        #txtProductDCoefficient.delete(0, END)
 
         cboCompoundA.set('')
         cboCompoundB.set('')
@@ -88,51 +89,48 @@ def tabExpectedYieldModules(tabN, lbl):
         """This function performs calculation for expected yield module operation on user input."""
 
         # Inputs for compound A. weight, units, and coefficient
-        compoundA = cboCompoundAF.get().strip()
-        weightA = float(txtCompoundAWeight.get().strip())
-        unitA = cboCompoundAUnits.get().strip()
-        coeffA = float(txtCompoundACoefficient.get().strip())
+        compound_a = cboCompoundAF.get().strip()
+        weight_a = float(txtCompoundAWeight.get().strip())
+        unit_a = cboCompoundAUnits.get().strip()
+        #coeff_a = float(txtCompoundACoefficient.get().strip())
 
         # Inputs for compound B. weight, units, and coefficient
-        compoundB = cboCompoundBF.get().strip()
-        weightB = float(txtCompoundBWeight.get().strip())
-        unitB = cboCompoundBUnits.get().strip()
-        coeffB = float(txtCompoundBCoefficient.get().strip())
+        compound_b = cboCompoundBF.get().strip()
+        weight_b = float(txtCompoundBWeight.get().strip())
+        unit_b = cboCompoundBUnits.get().strip()
+        #coeff_b = float(txtCompoundBCoefficient.get().strip())
 
-        productC = cboCompoundCF.get().strip()
-        weightC = float(txtCompoundCWeight.get().strip())
-        coeffC = float(txtProductCCoefficient.get().strip())
+        product_c = cboCompoundCF.get().strip()
+        #weight_c = float(txtCompoundCWeight.get().strip())
+        #coeff_c = float(txtProductCCoefficient.get().strip())
 
-        weightD = float(txtCompoundDWeight.get().strip())
+        #weightD = float(txtCompoundDWeight.get().strip())
 
-        productD = cboCompoundDF.get().strip()
-        if productD:
-            try:
-                coeffD = float(txtProductDCoefficient.get().strip())
-            except ValueError:
-                result = "Invalid input for the coefficient. Setting it to None."
-                lblOutput.configure(text=result)
-                coeffD = None
-        else:
-            productD = None
-            coeffD = None
+        product_d = cboCompoundDF.get().strip()
+
+        balancer = ChemicalEquationBalancer(
+            compound_a, compound_b, product_c, product_d,
+        )
+
+        coefficients = balancer.find_coefficients()
+        coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
 
         # Call Expected Yield
         calculator = ey.ExpectedYieldCalculator(
-            compoundA, weightA, unitA, coeffA,
-            compoundB, weightB, unitB, coeffB,
-            productC, coeffC,
-            productD, coeffD
+            compound_a, weight_a, unit_a, coeff_a,
+            compound_b, weight_b, unit_b, coeff_b,
+            product_c, coeff_c,
+            product_d, coeff_d
         )
 
         # Find the expected yield and store in variables for output for product_c and product_d
-        expect_yield_product_c, expect_yield_product_d = calculator.find_expected_yield(weightA,weightB,weightC,weightD)
-        result = f"The expected yield for {productC} is: {expect_yield_product_c:.3f} grams"
+        expect_yield_product_c, expect_yield_product_d = calculator.find_expected_yield()
+        result = f"The expected yield for {product_c} is: {expect_yield_product_c:.3f} grams"
         lblOutput.configure(text=result)
         # Doesn't print anything if product_d doesn't exist
-        if expect_yield_product_d is not None:
-            result = f"The expected yield for {productD} is: {expect_yield_product_d:.3f} grams"
-            lblOutput.configure(text=result)
+        if expect_yield_product_d is not None and expect_yield_product_d != 0:
+            result = f"The expected yield for {product_d} is: {expect_yield_product_d:.3f} grams"
+            #lblOutput.configure(text=result)
 
         clearFields()
 
@@ -161,7 +159,7 @@ def tabExpectedYieldModules(tabN, lbl):
             chemical_formula, molecular_weight = fetchChemicalDetails(cursor, selected_name)
             cboCompoundAF.set(chemical_formula)
             txtCompoundAWeight.delete(0, END)
-            txtCompoundAWeight.insert(0, str(molecular_weight))
+            #txtCompoundAWeight.insert(0, str(molecular_weight))
             cursor.close()
             connection.close()
 
@@ -175,7 +173,7 @@ def tabExpectedYieldModules(tabN, lbl):
             chemical_formula, molecular_weight = fetchChemicalDetails(cursor, selected_name)
             cboCompoundBF.set(chemical_formula)
             txtCompoundBWeight.delete(0, END)
-            txtCompoundBWeight.insert(0, str(molecular_weight))
+            #txtCompoundBWeight.insert(0, str(molecular_weight))
             cursor.close()
             connection.close()
 
@@ -188,8 +186,8 @@ def tabExpectedYieldModules(tabN, lbl):
             cursor = connection.cursor()
             chemical_formula, molecular_weight = fetchChemicalDetails(cursor, selected_name)
             cboCompoundCF.set(chemical_formula)
-            txtCompoundCWeight.delete(0, END)
-            txtCompoundCWeight.insert(0, str(molecular_weight))
+            #txtCompoundCWeight.delete(0, END)
+            #txtCompoundCWeight.insert(0, str(molecular_weight))
             cursor.close()
             connection.close()
 
@@ -202,8 +200,8 @@ def tabExpectedYieldModules(tabN, lbl):
             cursor = connection.cursor()
             chemical_formula, molecular_weight = fetchChemicalDetails(cursor, selected_name)
             cboCompoundDF.set(chemical_formula)
-            txtCompoundDWeight.delete(0, END)
-            txtCompoundDWeight.insert(0, str(molecular_weight))
+            #txtCompoundDWeight.delete(0, END)
+            #txtCompoundDWeight.insert(0, str(molecular_weight))
             cursor.close()
             connection.close()
     #Title
@@ -235,11 +233,11 @@ def tabExpectedYieldModules(tabN, lbl):
     cboCompoundAUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"], width=300, dropdown_font=("Helvetica", 19))
     cboCompoundAUnits.grid(row=4, column=1, pady=1)
 
-    lblCompoundACoefficient = customtkinter.CTkLabel(tabN, text="Compound A Coefficient", font=("Helvetica", 15))
-    lblCompoundACoefficient.grid(row=5, column=0, pady=1)
+    #lblCompoundACoefficient = customtkinter.CTkLabel(tabN, text="Compound A Coefficient", font=("Helvetica", 15))
+    #lblCompoundACoefficient.grid(row=5, column=0, pady=1)
 
-    txtCompoundACoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
-    txtCompoundACoefficient.grid(row=5, column=1, pady=1)
+    #txtCompoundACoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
+    #txtCompoundACoefficient.grid(row=5, column=1, pady=1)
     # Compound B widgets
     lblCompoundB = customtkinter.CTkLabel(tabN, text="Compound B", font=("Helvetica", 15))
     lblCompoundB.grid(row=6, column=0, pady=1)
@@ -266,11 +264,11 @@ def tabExpectedYieldModules(tabN, lbl):
     cboCompoundBUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"], width=300, dropdown_font=("Helvetica", 19))
     cboCompoundBUnits.grid(row=9, column=1, pady=1)
 
-    lblCompoundBCoefficient = customtkinter.CTkLabel(tabN, text="Compound B Coefficient", font=("Helvetica", 15))
-    lblCompoundBCoefficient.grid(row=10, column=0, pady=1)
+    #lblCompoundBCoefficient = customtkinter.CTkLabel(tabN, text="Compound B Coefficient", font=("Helvetica", 15))
+    #lblCompoundBCoefficient.grid(row=10, column=0, pady=1)
 
-    txtCompoundBCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
-    txtCompoundBCoefficient.grid(row=10, column=1, pady=1)
+    #txtCompoundBCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
+    #txtCompoundBCoefficient.grid(row=10, column=1, pady=1)
 
     # Product C widgets
     lblProductC = customtkinter.CTkLabel(tabN, text="Product C", font=("Helvetica", 15))
@@ -286,17 +284,17 @@ def tabExpectedYieldModules(tabN, lbl):
     cboCompoundCF = AutocompleteCombobox(tabN, width=32, font=35)
     cboCompoundCF.grid(row=12, column=1, pady=1)
 
-    lblCompoundCWeight = customtkinter.CTkLabel(tabN, text="Compound C Weight", font=("Helvetica", 15))
-    lblCompoundCWeight.grid(row=13, column=0, pady=1)
+    #lblCompoundCWeight = customtkinter.CTkLabel(tabN, text="Compound C Weight", font=("Helvetica", 15))
+    #lblCompoundCWeight.grid(row=13, column=0, pady=1)
 
-    txtCompoundCWeight = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
-    txtCompoundCWeight.grid(row=13, column=1, pady=1)
+    #txtCompoundCWeight = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
+    #txtCompoundCWeight.grid(row=13, column=1, pady=1)
 
-    lblProductCCoefficient = customtkinter.CTkLabel(tabN, text="Product C Coefficient", font=("Helvetica", 15))
-    lblProductCCoefficient.grid(row=14, column=0, pady=3)
+    #lblProductCCoefficient = customtkinter.CTkLabel(tabN, text="Product C Coefficient", font=("Helvetica", 15))
+    #lblProductCCoefficient.grid(row=14, column=0, pady=3)
 
-    txtProductCCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
-    txtProductCCoefficient.grid(row=14, column=1, pady=1)
+   # txtProductCCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
+    #txtProductCCoefficient.grid(row=14, column=1, pady=1)
 
     # Product C widgets
     lblProductD = customtkinter.CTkLabel(tabN, text="Product D", font=("Helvetica", 15))
@@ -312,17 +310,17 @@ def tabExpectedYieldModules(tabN, lbl):
     cboCompoundDF = AutocompleteCombobox(tabN, width=32, font=35)
     cboCompoundDF.grid(row=16, column=1, pady=1)
 
-    lblCompoundDWeight = customtkinter.CTkLabel(tabN, text="Compound A Weight", font=("Helvetica", 15))
-    lblCompoundDWeight.grid(row=17, column=0, pady=1)
+    #lblCompoundDWeight = customtkinter.CTkLabel(tabN, text="Compound A Weight", font=("Helvetica", 15))
+    #lblCompoundDWeight.grid(row=17, column=0, pady=1)
 
-    txtCompoundDWeight = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
-    txtCompoundDWeight.grid(row=17, column=1, pady=1)
+    #txtCompoundDWeight = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
+    #txtCompoundDWeight.grid(row=17, column=1, pady=1)
 
-    lblProductDCoefficient = customtkinter.CTkLabel(tabN, text="Product D Coefficient", font=("Helvetica", 15))
-    lblProductDCoefficient.grid(row=18, column=0, pady=1)
+    #lblProductDCoefficient = customtkinter.CTkLabel(tabN, text="Product D Coefficient", font=("Helvetica", 15))
+    #lblProductDCoefficient.grid(row=18, column=0, pady=1)
 
-    txtProductDCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
-    txtProductDCoefficient.grid(row=18, column=1, pady=1)
+    #txtProductDCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
+    #txtProductDCoefficient.grid(row=18, column=1, pady=1)
 
     # Calling function to populate combo boxes with chemical names
     populateChemicalNames()
