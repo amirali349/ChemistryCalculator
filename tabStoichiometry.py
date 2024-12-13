@@ -74,7 +74,7 @@ def tabStoichiometry(tabN,lbl):
 
         coeffA, coeffB, coeffC, coeffD = coefficients.values()
 
-        print("\nBalanced equation coefficients:")
+        #print("\nBalanced equation coefficients:")
 
         result = f"Balanced equation coefficients: {coeffA}{compoundA} + {coeffB}{compoundB} = {coeffC}{productC} + {coeffD if coeffD else ''}{productD if productD else ''} "
         result2 = f" The Coefficients are: {coefficients}"

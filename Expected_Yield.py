@@ -3,12 +3,16 @@
 # Project Title: Chemistry Calculator
 # This project provides GUI based easy to use approach to perform various sophisticated chemical operations/calculations.
 # This file creates class for Expected Yield Module calculation operation on chemical compounds.
+from quantities.constants import molar_mass_constant
+
 
 class ExpectedYieldCalculator:
     """
            A class used to perform expected yield calculations on chemical compounds.
         """
-    def __init__(self, compound_a, weight_a, unit_a, coeff_a, compound_b, weight_b, unit_b, coeff_b, product_c, coeff_c, product_d, coeff_d):
+    def __init__(self, compound_a, weight_a, unit_a, coeff_a, compound_b,
+                 weight_b, unit_b, coeff_b, product_c, coeff_c, product_d, coeff_d,
+                 molar_mass_a, molar_mass_b, molar_mass_c, molar_mass_d):
         # Initialize variables including product C and product D
         """
                A constructor function to initialize class variables.
@@ -40,25 +44,28 @@ class ExpectedYieldCalculator:
         self.coeff_c = coeff_c
         self.product_d = product_d
         self.coeff_d = coeff_d
+        self.molar_mass_a = molar_mass_a
+        self.molar_mass_b = molar_mass_b
+        self.molar_mass_c = molar_mass_c
+        self.molar_mass_d = molar_mass_d
         # This is the value in the third column in the database Labeled "Molecular weight"
         # value has units of g/mol and needs to be found when a person inputs the compound.
         # Below is a test case where I hard coded a few test values.
-        self.molar_masses = {
-            'CH4': 16.04,
-            'O₂': 32.00,
-            'CO₂': 44.01,
-            'H₂O': 18.02,
-            'N₂': 28.0,
-            'H₂': 2.02,
-            'NH₃': 17.0,
-            'C6H12O6': 180.06
-        }
+        #self.molar_masses = {
+        #    'CH4': 16.04,
+        #    'O₂': 32.00,
+        #    'CO₂': 44.01,
+        #    'H₂O': 18.02,
+        #    'H₂': 2.02,
+        #    'NH₃': 17.0,
+        #    'C6H12O6': 180.06
+        #}
         # These will be our returned values
         self.expected_yield_product_c = None
         self.expected_yield_product_d = None
 
-    def get_molar_mass(self, compound):
-        return self.molar_masses.get(compound, None)
+    #def get_molar_mass(self, compound):
+     #   return self.molar_masses.get(compound, None)
 
     def convert_to_grams(self, weight, unit):
         """This function ensures that all calculations are done in grams regardless of the units they entered."""
@@ -92,10 +99,15 @@ class ExpectedYieldCalculator:
         weight_b_g = self.convert_to_grams(self.weight_b, self.unit_b)
 
         # Get molar masses
-        molar_mass_a = self.get_molar_mass(self.compound_a)
-        molar_mass_b = self.get_molar_mass(self.compound_b)
-        molar_mass_c = self.get_molar_mass(self.product_c)
-        molar_mass_d = self.get_molar_mass(self.product_d)
+        #molar_mass_a = self.get_molar_mass(self.compound_a)
+        #molar_mass_b = self.get_molar_mass(self.compound_b)
+        #molar_mass_c = self.get_molar_mass(self.product_c)
+        #molar_mass_d = self.get_molar_mass(self.product_d)
+
+        molar_mass_a = self.molar_mass_a
+        molar_mass_b = self.molar_mass_b
+        molar_mass_c = self.molar_mass_c
+        molar_mass_d = self.molar_mass_d
 
         if molar_mass_a is None or molar_mass_b is None:
             raise ValueError("Molar mass of one or both compounds is not available.")

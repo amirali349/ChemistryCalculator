@@ -14,9 +14,11 @@ from ttkwidgets.autocomplete import AutocompleteCombobox
 import database as db
 import Limiting_Reactant as lr
 import pymysql
-#from Stoichiometry import ChemicalEquationBalancer
+from Stoichiometry import ChemicalEquationBalancer
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("blue")
+
+
 
 def connectDB():
     """
@@ -73,6 +75,8 @@ def tabLimitingReactants(tabN,lbl):
         chemical_names = fetchChemicalNames(cursor)
         cboCompoundA['completevalues'] = chemical_names
         cboCompoundB['completevalues'] = chemical_names
+        cboProductC['completevalues'] = chemical_names
+        cboProductD['completevalues'] = chemical_names
         cursor.close()
         connection.close()
 
@@ -88,6 +92,7 @@ def tabLimitingReactants(tabN,lbl):
             cboCompoundAF.set(chemical_formula)
             txtCompoundAWeight.delete(0, END)
             #txtCompoundAWeight.insert(0, str(molecular_weight))
+            cboMolarMassA.set(molecular_weight)
             cursor.close()
             connection.close()
 
@@ -103,6 +108,35 @@ def tabLimitingReactants(tabN,lbl):
             cboCompoundBF.set(chemical_formula)
             txtCompoundBWeight.delete(0, END)
             #txtCompoundBWeight.insert(0, str(molecular_weight))
+            cboMolarMassB.set(molecular_weight)
+            cursor.close()
+            connection.close()
+
+    def on_selectC(event):
+        """This function loads the chemical formula and molecular weight in their respective widgets based on chemical
+        name selected for Product C."""
+
+        selected_name = cboProductC.get()
+        if selected_name:
+            connection = connectDB()
+            cursor = connection.cursor()
+            chemical_formula = fetchChemicalFormulas(cursor, selected_name)
+            cboCompoundCF.set(chemical_formula)
+            #cboMolarMassC.set(molecular_weight)
+            cursor.close()
+            connection.close()
+
+    def on_selectD(event):
+        """This function loads the chemical formula and molecular weight in their respective widgets based on chemical
+        name selected for Product D."""
+
+        selected_name = cboProductD.get()
+        if selected_name:
+            connection = connectDB()
+            cursor = connection.cursor()
+            chemical_formula = fetchChemicalFormulas(cursor, selected_name)
+            cboCompoundDF.set(chemical_formula)
+            #cboMolarMassD.set(molecular_weight)
             cursor.close()
             connection.close()
 
@@ -113,25 +147,35 @@ def tabLimitingReactants(tabN,lbl):
         compound_a = cboCompoundAF.get().strip()
         weight_a = float(txtCompoundAWeight.get().strip())
         unit_a = cboCompoundAUnits.get().strip()
-        coeff_a = float(txtCompoundACoefficient.get().strip())
+        #coeff_a = float(txtCompoundACoefficient.get().strip())
+        molar_mass_a = float(cboMolarMassA.get().strip())
+
 
         # Inputs for compound B. weight, units, and coefficient
         compound_b = cboCompoundBF.get().strip()
         weight_b = float(txtCompoundBWeight.get().strip())
         unit_b = cboCompoundBUnits.get().strip()
-        coeff_b = float(txtCompoundBCoefficient.get().strip())
+        #coeff_b = float(txtCompoundBCoefficient.get().strip())
+        molar_mass_b = float(cboMolarMassB.get().strip())
 
-        #balancer = ChemicalEquationBalancer(
-        #    compound_a, compound_b, product_c, product_d,
-        #)
+        product_c = cboCompoundCF.get().strip()
+        product_d = cboCompoundDF.get().strip()
 
-        #coefficients = balancer.find_coefficients()
-        #coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
+        balancer = ChemicalEquationBalancer(
+            compound_a, compound_b, product_c, product_d,
+        )
+
+        coefficients = balancer.find_coefficients()
+        coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
+
+        #print(f"Molar Mass a {molar_mass_a}")
+        #print(f"Molar Mass b {molar_mass_b}")
 
         # Call LimitingReactant
         calculator = lr.LimitingReactant(
             compound_a, weight_a, unit_a, coeff_a,
-            compound_b, weight_b, unit_b, coeff_b
+            compound_b, weight_b, unit_b, coeff_b,
+            molar_mass_a, molar_mass_b
         )
 
         # Find the limiting reactant
@@ -168,10 +212,15 @@ def tabLimitingReactants(tabN,lbl):
     cboCompoundAUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"],width=300,dropdown_font=("Helvetica",19))
     cboCompoundAUnits.pack()
 
-    lblCompoundACoefficient = customtkinter.CTkLabel(tabN, text="Compound A Coefficient", font=("Helvetica", 15))
-    lblCompoundACoefficient.pack()
-    txtCompoundACoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
-    txtCompoundACoefficient.pack()
+    # Create Variables to Store the Molar Mass from Database
+    cboMolarMassA = StringVar()
+    cboMolarMassB = StringVar()
+
+
+    #lblCompoundACoefficient = customtkinter.CTkLabel(tabN, text="Compound A Coefficient", font=("Helvetica", 15))
+   # lblCompoundACoefficient.pack()
+    #txtCompoundACoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
+    #txtCompoundACoefficient.pack()
 
     # Compound B
     lblCompoundB = customtkinter.CTkLabel(tabN, text="Compound B",font=("Helvetica",15))
@@ -195,10 +244,35 @@ def tabLimitingReactants(tabN,lbl):
     cboCompoundBUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"],width=300,dropdown_font=("Helvetica",19))
     cboCompoundBUnits.pack()
 
-    lblCompoundBCoefficient = customtkinter.CTkLabel(tabN, text="Compound B Coefficient", font=("Helvetica", 15))
-    lblCompoundBCoefficient.pack()
-    txtCompoundBCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
-    txtCompoundBCoefficient.pack()
+    #lblCompoundBCoefficient = customtkinter.CTkLabel(tabN, text="Compound B Coefficient", font=("Helvetica", 15))
+    #lblCompoundBCoefficient.pack()
+    #txtCompoundBCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
+    #txtCompoundBCoefficient.pack()
+
+    # Product C
+    lblProductC = customtkinter.CTkLabel(tabN, text="Product C", font=("Helvetica", 15))
+    lblProductC.pack()
+    cboProductC = AutocompleteCombobox(tabN, width=32, font=35)
+    cboProductC.bind("<<ComboboxSelected>>", on_selectC)
+    cboProductC.pack(pady=5)
+    lblCompoundCF = customtkinter.CTkLabel(tabN, text="Compound Formula", width=200, font=("Helvetica", 15))
+    lblCompoundCF.pack()
+    cboCompoundCF = AutocompleteCombobox(tabN, width=32, font=35)
+    cboCompoundCF.pack()
+
+    # Product D
+    lblProductD = customtkinter.CTkLabel(tabN, text="Product D", font=("Helvetica", 15))
+    lblProductD.pack()
+    cboProductD = AutocompleteCombobox(tabN, width=32, font=35)
+    cboProductD.bind("<<ComboboxSelected>>", on_selectD)
+    # cboProductD = customtkinter.CTkOptionMenu(tabN, values=["Kilogram","Gram", "Milligram"], width=300, dropdown_font=("Helvetica",19))
+    cboProductD.pack(pady=5)
+    lblCompoundDF = customtkinter.CTkLabel(tabN, text="Compound Formula", width=200, font=("Helvetica", 15))
+    lblCompoundDF.pack()
+    cboCompoundDF = AutocompleteCombobox(tabN, width=32, font=35)
+    cboCompoundDF.pack()
+
+
 
     # Calling function to populate combo boxes with chemical names
     populateChemicalNames()

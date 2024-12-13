@@ -5,7 +5,7 @@
 # This file creates class for Limiting Reactant calculation operation on chemical compounds.
 
 class LimitingReactant:
-    def __init__(self, compound_a, weight_a, unit_a, coeff_a, compound_b, weight_b, unit_b, coeff_b):
+    def __init__(self, compound_a, weight_a, unit_a, coeff_a, compound_b, weight_b, unit_b, coeff_b, molar_mass_a, molar_mass_b):
         # Initialize variables
         self.compound_a = compound_a
         self.weight_a = weight_a
@@ -15,26 +15,29 @@ class LimitingReactant:
         self.weight_b = weight_b
         self.unit_b = unit_b
         self.coeff_b = coeff_b
-        # This is the value in the third column in the database Labeled "Molecular weight"
-        # value has units of g/mol and needs to be found when a person inputs the compound.
-        # Below is a test case where I hard coded a few test values.
-        self.molar_masses = {
+        self.molar_mass_a = molar_mass_a
+        self.molar_mass_b = molar_mass_b
+        """ This is the value in the third column in the database Labeled "Molecular weight"
+         value has units of g/mol and needs to be found when a person inputs the compound.
+         Below is a test case where I hard coded a few test values. """
+        #self.molar_masses = {
 
-            'CH4': 16.04,
-            'O₂': 32.00,
-            'CO2': 44.01,
-            'H2O': 18.02,
-            'N₂': 28.0,
-            'H₂': 2.02,
-            'NH3': 17.0,
-            'C6H12O6': 180.06
-        }
+        #    'CH4': 16.04,
+        #    'O₂': 32.00,
+        #    'CO2': 44.01,
+        #    'H2O': 18.02,
+        #    'N₂': 28.0,
+        #    'H₂': 2.02,
+        #    'NH3': 17.0,
+        #    'C6H12O6': 180.06
+        #}
         self.limiting_reactant = None
         self.expected_yield = None
 
-    def get_molar_mass(self, compound):
+    #def get_molar_mass(self, compound):
         # Looks for the key and returns the appropriate molecular weight value
-        return self.molar_masses.get(compound, None)
+        # Used before database was properly setup
+        #return self.molar_masses.get(compound, None)
 
     def convert_to_grams(self, weight, unit):
         # Ensures that all calculations are done in grams regardless of the units they entered
@@ -58,8 +61,11 @@ class LimitingReactant:
         weight_b_g = self.convert_to_grams(self.weight_b, self.unit_b)
 
         # Get molar masses
-        molar_mass_a = self.get_molar_mass(self.compound_a)
-        molar_mass_b = self.get_molar_mass(self.compound_b)
+        #molar_mass_a = self.get_molar_mass(self.compound_a)
+        #molar_mass_b = self.get_molar_mass(self.compound_b)
+        # Set molar masses from database
+        molar_mass_a = self.molar_mass_a
+        molar_mass_b = self.molar_mass_b
 
         if molar_mass_a is None or molar_mass_b is None:
             raise ValueError("Molar mass of one or both compounds is not available.")

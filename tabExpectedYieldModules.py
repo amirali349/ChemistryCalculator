@@ -93,20 +93,31 @@ def tabExpectedYieldModules(tabN, lbl):
         weight_a = float(txtCompoundAWeight.get().strip())
         unit_a = cboCompoundAUnits.get().strip()
         #coeff_a = float(txtCompoundACoefficient.get().strip())
+        molar_mass_a = float(cboMolarMassA.get().strip())
 
         # Inputs for compound B. weight, units, and coefficient
         compound_b = cboCompoundBF.get().strip()
         weight_b = float(txtCompoundBWeight.get().strip())
         unit_b = cboCompoundBUnits.get().strip()
         #coeff_b = float(txtCompoundBCoefficient.get().strip())
+        molar_mass_b = float(cboMolarMassB.get().strip())
 
         product_c = cboCompoundCF.get().strip()
         #weight_c = float(txtCompoundCWeight.get().strip())
         #coeff_c = float(txtProductCCoefficient.get().strip())
+        molar_mass_c = float(cboMolarMassC.get().strip())
 
         #weightD = float(txtCompoundDWeight.get().strip())
 
         product_d = cboCompoundDF.get().strip()
+
+        if cboMolarMassD.get().strip():
+            try:
+                molar_mass_d = float(cboMolarMassD.get().strip())
+            except ValueError:
+                molar_mass_d = 0
+        else:
+            molar_mass_d = 0
 
         balancer = ChemicalEquationBalancer(
             compound_a, compound_b, product_c, product_d,
@@ -120,7 +131,8 @@ def tabExpectedYieldModules(tabN, lbl):
             compound_a, weight_a, unit_a, coeff_a,
             compound_b, weight_b, unit_b, coeff_b,
             product_c, coeff_c,
-            product_d, coeff_d
+            product_d, coeff_d,
+            molar_mass_a, molar_mass_b, molar_mass_c, molar_mass_d
         )
 
         # Find the expected yield and store in variables for output for product_c and product_d
@@ -160,6 +172,7 @@ def tabExpectedYieldModules(tabN, lbl):
             cboCompoundAF.set(chemical_formula)
             txtCompoundAWeight.delete(0, END)
             #txtCompoundAWeight.insert(0, str(molecular_weight))
+            cboMolarMassA.set(molecular_weight)
             cursor.close()
             connection.close()
 
@@ -174,6 +187,7 @@ def tabExpectedYieldModules(tabN, lbl):
             cboCompoundBF.set(chemical_formula)
             txtCompoundBWeight.delete(0, END)
             #txtCompoundBWeight.insert(0, str(molecular_weight))
+            cboMolarMassB.set(molecular_weight)
             cursor.close()
             connection.close()
 
@@ -188,6 +202,7 @@ def tabExpectedYieldModules(tabN, lbl):
             cboCompoundCF.set(chemical_formula)
             #txtCompoundCWeight.delete(0, END)
             #txtCompoundCWeight.insert(0, str(molecular_weight))
+            cboMolarMassC.set(molecular_weight)
             cursor.close()
             connection.close()
 
@@ -202,6 +217,7 @@ def tabExpectedYieldModules(tabN, lbl):
             cboCompoundDF.set(chemical_formula)
             #txtCompoundDWeight.delete(0, END)
             #txtCompoundDWeight.insert(0, str(molecular_weight))
+            cboMolarMassD.set(molecular_weight)
             cursor.close()
             connection.close()
     #Title
@@ -321,6 +337,12 @@ def tabExpectedYieldModules(tabN, lbl):
 
     #txtProductDCoefficient = customtkinter.CTkEntry(tabN, width=300, border_color="#1a75ff")
     #txtProductDCoefficient.grid(row=18, column=1, pady=1)
+
+    # Create Variables to Store the Molar Mass from Database
+    cboMolarMassA = StringVar()
+    cboMolarMassB = StringVar()
+    cboMolarMassC = StringVar()
+    cboMolarMassD = StringVar()
 
     # Calling function to populate combo boxes with chemical names
     populateChemicalNames()
