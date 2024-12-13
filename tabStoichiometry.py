@@ -12,8 +12,6 @@ from tkinter import ttk
 from customtkinter import CTkLabel, CTkOptionMenu
 from pasta.base.fstring_utils import placeholder
 from ttkwidgets.autocomplete import AutocompleteCombobox
-from chempy.chemistry import Substance
-from chempy import balance_stoichiometry
 import Stoichiometry as st
 import database as db
 import pymysql
