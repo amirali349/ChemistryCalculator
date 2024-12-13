@@ -5,7 +5,11 @@ from Stoichiometry import ChemicalEquationBalancer
 
 @pytest.fixture
 def balancer():
-    return ChemicalEquationBalancer()
+    compound_a = "CH4"
+    compound_b = "O2"
+    product_c = "CO2"
+    product_d = "H2O"
+    return ChemicalEquationBalancer(compound_a, compound_b, product_c, product_d)
 
 
 def test_parse_formula(balancer):
