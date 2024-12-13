@@ -32,12 +32,12 @@ Individual Tabs: Test Chemical Equation: N2 + H2 = NH3
 9. For W-V Solutions enter the name of the compound and then 2 out of the 3 quantities listed (Mass of compound A, Volume of solvent A, Percentage). The 3rd will be calculated automatically.
 
 ****************************************************************************************************************************************
-***Side Note the database is limited to only 65 compounds currently (ran out of time to automate and validate). 
-***This limits the total combination of Valid Chemical Equations. Some examples are:
-***Salt double replacements using Cl, Br, or NO3. LiOH + NaCl = LiCl + NaOH
-***Burning reactions that produce CO2 and H2O. C6H12O6 (glucose) + O2 = CO2 + H2O
-***Gases: S + O2 = SO2; H2 + O2 = H2O; N2 + O2 = NO2;
-***If your database is missing Water or Carbon dioxide please delete the old SQL database and use the database.csv file from this Repo
+1. Side Note the database is limited to only 65 compounds currently (ran out of time to automate and validate). 
+2. This limits the total combination of Valid Chemical Equations. Some examples are:
+3. Salt double replacements using Cl, Br, or NO3. LiOH + NaCl = LiCl + NaOH
+4. Burning reactions that produce CO2 and H2O. C6H12O6 (glucose) + O2 = CO2 + H2O
+5. Gases: S + O2 = SO2; H2 + O2 = H2O; N2 + O2 = NO2;
+6. If your database is missing Water or Carbon dioxide please delete the old SQL database and use the database.csv file from this Repo
 ****************************************************************************************************************************************
 
 *********************************************************************************
