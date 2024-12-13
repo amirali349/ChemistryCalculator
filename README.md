@@ -12,10 +12,10 @@ User: Root
 Password: Chemistry.123
 
 Instructions to run the calculator:
-1st. Download all the files and load into your IDE.
-2nd. Ensure all python libraries have successfully installed.
-3rd. Run the database.py file to create the MYSQL database.
-4th. Run the gui.py file and wait for the interface to load.
+1. Download all the files and load into your IDE.
+2. Ensure all python libraries have successfully installed.
+3. Run the database.py file to create the MYSQL database.
+4. Run the gui.py file and wait for the interface to load.
 
 
 *********************************************************************************
