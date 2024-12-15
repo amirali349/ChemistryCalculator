@@ -93,31 +93,31 @@ def tabExpectedYieldModules(tabN, lbl):
         weight_a = float(txtCompoundAWeight.get().strip())
         unit_a = cboCompoundAUnits.get().strip()
         #coeff_a = float(txtCompoundACoefficient.get().strip())
-        molar_mass_a = float(cboMolarMassA.get().strip())
+        #molar_mass_a = float(cboMolarMassA.get().strip())
 
         # Inputs for compound B. weight, units, and coefficient
         compound_b = cboCompoundBF.get().strip()
         weight_b = float(txtCompoundBWeight.get().strip())
         unit_b = cboCompoundBUnits.get().strip()
         #coeff_b = float(txtCompoundBCoefficient.get().strip())
-        molar_mass_b = float(cboMolarMassB.get().strip())
+        #molar_mass_b = float(cboMolarMassB.get().strip())
 
         product_c = cboCompoundCF.get().strip()
         #weight_c = float(txtCompoundCWeight.get().strip())
         #coeff_c = float(txtProductCCoefficient.get().strip())
-        molar_mass_c = float(cboMolarMassC.get().strip())
+        #molar_mass_c = float(cboMolarMassC.get().strip())
 
         #weightD = float(txtCompoundDWeight.get().strip())
 
         product_d = cboCompoundDF.get().strip()
 
-        if cboMolarMassD.get().strip():
-            try:
-                molar_mass_d = float(cboMolarMassD.get().strip())
-            except ValueError:
-                molar_mass_d = 0
-        else:
-            molar_mass_d = 0
+        #if cboMolarMassD.get().strip():
+        #    try:
+        #        molar_mass_d = float(cboMolarMassD.get().strip())
+        #    except ValueError:
+        #        molar_mass_d = 0
+        #else:
+        #    molar_mass_d = 0
 
         balancer = ChemicalEquationBalancer(
             compound_a, compound_b, product_c, product_d,
@@ -125,6 +125,8 @@ def tabExpectedYieldModules(tabN, lbl):
 
         coefficients = balancer.find_coefficients()
         coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
+
+        molar_mass_a, molar_mass_b, molar_mass_c, molar_mass_d = balancer.find_molecular_weight()
 
         # Call Expected Yield
         calculator = ey.ExpectedYieldCalculator(
@@ -138,11 +140,13 @@ def tabExpectedYieldModules(tabN, lbl):
         # Find the expected yield and store in variables for output for product_c and product_d
         expect_yield_product_c, expect_yield_product_d = calculator.find_expected_yield()
         result = f"The expected yield for {product_c} is: {expect_yield_product_c:.3f} grams"
-        lblOutput.configure(text=result)
+
         # Doesn't print anything if product_d doesn't exist
         if expect_yield_product_d is not None and expect_yield_product_d != 0:
-            result = f"The expected yield for {product_d} is: {expect_yield_product_d:.3f} grams"
+            result = f"The expected yield for {product_c} is: {expect_yield_product_c:.3f} grams\nThe expected yield for {product_d} is: {expect_yield_product_d:.3f} grams"
             #lblOutput.configure(text=result)
+
+        lblOutput.configure(text=result)
 
         clearFields()
 
@@ -246,7 +250,7 @@ def tabExpectedYieldModules(tabN, lbl):
     lblCompoundAUnits = customtkinter.CTkLabel(tabN, text="Units", width=300, font=("Helvetica", 15))
     lblCompoundAUnits.grid(row=4, column=0, pady=1)
 
-    cboCompoundAUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"], width=300, dropdown_font=("Helvetica", 19))
+    cboCompoundAUnits = customtkinter.CTkOptionMenu(tabN, values=["Gram", "Milligram", "Kilogram"], width=300, dropdown_font=("Helvetica", 19))
     cboCompoundAUnits.grid(row=4, column=1, pady=1)
 
     #lblCompoundACoefficient = customtkinter.CTkLabel(tabN, text="Compound A Coefficient", font=("Helvetica", 15))
@@ -277,7 +281,7 @@ def tabExpectedYieldModules(tabN, lbl):
     lblCompoundBUnits = customtkinter.CTkLabel(tabN, text="Units", font=("Helvetica", 15))
     lblCompoundBUnits.grid(row=9, column=0, pady=1)
 
-    cboCompoundBUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"], width=300, dropdown_font=("Helvetica", 19))
+    cboCompoundBUnits = customtkinter.CTkOptionMenu(tabN, values=["Gram", "Milligram", "Kilogram"], width=300, dropdown_font=("Helvetica", 19))
     cboCompoundBUnits.grid(row=9, column=1, pady=1)
 
     #lblCompoundBCoefficient = customtkinter.CTkLabel(tabN, text="Compound B Coefficient", font=("Helvetica", 15))

@@ -4,7 +4,6 @@
 # This project provides a GUI-based easy-to-use approach to perform various sophisticated chemical operations/calculations.
 # This file creates a database for various operations in this application.
 
-
 import pymysql
 import openpyxl
 

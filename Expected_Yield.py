@@ -3,7 +3,7 @@
 # Project Title: Chemistry Calculator
 # This project provides GUI based easy to use approach to perform various sophisticated chemical operations/calculations.
 # This file creates class for Expected Yield Module calculation operation on chemical compounds.
-
+from quantities.constants import molar_mass_constant
 
 
 class ExpectedYieldCalculator:

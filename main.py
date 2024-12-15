@@ -1,127 +1,135 @@
-from weightPerWeight import WeightPerWeight
-from weightPerVolume import WeightPerVolume
-from dilution import DilutionCalculator
 from Limiting_Reactant import LimitingReactant
 from Stoichiometry import ChemicalEquationBalancer
 from Expected_Yield import ExpectedYieldCalculator
+from dilution import DilutionCalculator
+from weightPerWeight import WeightPerWeight
+from weightPerVolume import WeightPerVolume
 
-# Test calculator function
+
 def main():
-    choice = 0
+    while True:
+        print("Options:")
+        print("1. Stoichiometry Calculator")
+        print("2. Limiting Reactant Calculator")
+        print("3. Expected Yield Calculator")
+        print("4. Dilution Calculator")
+        print("5. w/w Solution Calculator")
+        print("6. w/v Solution Calculator")
+        print("-1. Quit")
 
-    # Loops through the calculator program until you hit -1 to quit.
-    while choice != -1:
-        calculator_choice = int(input("Which Calculator Would You Like to Use: "))
+        choice = int(input("Select an option: "))
+        if choice == -1:
+            print("Exiting program.")
+            break
+        elif choice == 1:
 
-        # W-W-Calculator
-        if calculator_choice == 1:
-            calculator = WeightPerWeight()
+            print("Enter the chemical compounds in the equation:")
+            # Input variables
+            compound_a = input("Compound A (e.g., CH4): ")
+            compound_b = input("Compound B (e.g., O2): ")
+            product_c = input("Product C (e.g., CO2): ")
+            product_d = input("Product D (e.g., H2O): ")
 
-            print("Weight per weight solution calculator")
-            print("Enter the weight of Compound A (solute), Compound B (solvent), or the percent solution (leave one blank).")
+            balancer = ChemicalEquationBalancer(
+                compound_a, compound_b, product_c, product_d,
+            )
 
-            try:
-                # input compound weights and units.
-                compound_a = input("Weight of Compound A (solute, e.g., 10 g, 500 mg, or 0.01 kg): ").strip()
-                compound_b = input("Weight of Compound B (solvent, e.g., 100 g, 1 kg, etc.): ").strip()
-                # input percent solution
-                percent_solution = input("Percent solution (w/w, e.g., 10): ").strip()
+            coefficients = balancer.find_coefficients()
 
-                # Parse inputs
-                compound_a_weight, compound_a_unit = (float(compound_a.split()[0]), compound_a.split()[1]) if compound_a else (
-                None, None)
-                compound_b_weight, compound_b_unit = (float(compound_b.split()[0]), compound_b.split()[1]) if compound_b else (
-                None, None)
-                percent_solution = float(percent_solution) if percent_solution else None
+            molar_mass_a, molar_mass_b, molar_mass_c, molar_mass_d = balancer.find_molecular_weight()
+            #print(molar_mass_a, molar_mass_b, molar_mass_c, molar_mass_d)
 
-                # Convert all weight to grams
-                compound_a = calculator.convert_to_grams(compound_a_weight, compound_a_unit) if compound_a_weight else None
-                compound_b = calculator.convert_to_grams(compound_b_weight, compound_b_unit) if compound_b_weight else None
+            coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
 
-                # Calculate the fourth value that was left blank
-                result = calculator.compute_solution(compound_a, compound_b, percent_solution)
+            print("\nBalanced equation coefficients:")
+            # Final line ensures nothing is printed if product D is left blank
+            print(f"{coeff_a}{compound_a} + {coeff_b}{compound_b} = {coeff_c}{product_c} + {coeff_d if coeff_d else ''}{product_d if product_d else ''}")
 
-                if compound_a is None:
-                    print(f"The weight of Compound A needed is: {result:.2f} grams.")
-                elif compound_b is None:
-                    print(f"The weight of Compound B needed is: {result:.2f} grams.")
-                elif percent_solution is None:
-                    print(f"The percent solution is: {result:.2f}%.")
-                else:
-                    print("Error: All inputs provided, but one should be left blank.")
-            except Exception as e:
-                print(f"An error occurred: {e}")
+            print(coefficients)
+        elif choice == 2:
 
-        # W-V-Calculator
-        elif calculator_choice == 2:
-            calculator = WeightPerVolume()
+            print("Enter the chemical compounds in the equation:")
+            # Input variables
+            compound_a = input("Compound A (e.g., CH4): ")
+            compound_b = input("Compound B (e.g., O2): ")
+            product_c = input("Product C (e.g., CO2): ")
+            product_d = input("Product D (e.g., H2O): ")
 
-            print("Weight per volume solution calculator")
-            print("Enter the weight of solute, volume of solvent, or the percent solution (leave one blank).")
+            balancer = ChemicalEquationBalancer(
+                compound_a, compound_b, product_c, product_d,
+            )
 
-            try:
-                # input the weight and volumes that will be used.
-                # solute is the same thing as compound A just the technical chemistry term for it
-                solute_input = input("Weight of solute (e.g., 10 g, 500 mg, or 0.01 kg): ").strip()
-                # solvent is the same as solvent A. Just a cleaner way to convey it to the user
-                volume_input = input("Volume of solvent (e.g., 100 mL, 1 L, etc.): ").strip()
-                percent_solution = input("Percent solution (w/v, e.g., 10): ").strip()
+            coefficients = balancer.find_coefficients()
+            coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
 
-                # Parse inputs
-                solute_weight, solute_unit = (
-                float(solute_input.split()[0]), solute_input.split()[1]) if solute_input else (None, None)
-                solvent_volume, volume_unit = (
-                float(volume_input.split()[0]), volume_input.split()[1]) if volume_input else (None, None)
-                percent_solution = float(percent_solution) if percent_solution else None
+            weight_a = float(input(f"Enter the weight of {compound_a}: "))
+            unit_a = input("Enter the unit of weight (mg, g, kg): ")
 
-                # Convert to grams and milliliters
-                solute_weight = calculator.convert_weight_to_grams(solute_weight, solute_unit) if solute_weight else None
-                solvent_volume = calculator.convert_volume_to_milliliters(solvent_volume,
-                                                                          volume_unit) if solvent_volume else None
+            weight_b = float(input(f"Enter the weight of {compound_b}: "))
+            unit_b = input("Enter the unit of weight (mg, g, kg): ")
 
-                # Calculate the missing value
-                result = calculator.compute_solution(solute_weight, solvent_volume, percent_solution)
+            calculator = LimitingReactant(
+                compound_a, weight_a, unit_a, coeff_a,
+                compound_b, weight_b, unit_b, coeff_b
+            )
+            limiting = calculator.find_limiting_reactant()
+            if limiting:
+                print(f"The limiting reactant is: {limiting}")
+            else:
+                print("Reactants are in perfect stoichiometric ratio.")
 
-                if solute_weight is None:
-                    print(f"The weight of solute needed is: {result:.2f} grams.")
-                elif solvent_volume is None:
-                    print(f"The volume of solvent needed is: {result:.2f} milliliters.")
-                elif percent_solution is None:
-                    print(f"The percent solution is: {result:.2f}%.")
-                else:
-                    print("Error: All inputs provided, but one should be left blank.")
-            except Exception as e:
-                print(f"An error occurred: {e}")
+        elif choice == 3:
+            print("Enter the chemical compounds in the equation:")
+            # Input variables
+            compound_a = input("Compound A (e.g., CH4): ")
+            compound_b = input("Compound B (e.g., O2): ")
+            product_c = input("Product C (e.g., CO2): ")
+            product_d = input("Product D (e.g., H2O): ")
 
-        # Dilution Calculator
-        elif calculator_choice == 3:
-            calculator = DilutionCalculator()
+            balancer = ChemicalEquationBalancer(
+                compound_a, compound_b, product_c, product_d,
+            )
+
+            coefficients = balancer.find_coefficients()
+            coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
+
+            weight_a = float(input(f"Enter the weight of {compound_a}: "))
+            unit_a = input("Enter the unit of weight (mg, g, kg): ")
+
+            weight_b = float(input(f"Enter the weight of {compound_b}: "))
+            unit_b = input("Enter the unit of weight (mg, g, kg): ")
+
+            calculator = ExpectedYieldCalculator(
+                compound_a, weight_a, unit_a, coeff_a,
+                compound_b, weight_b, unit_b, coeff_b,
+                product_c, coeff_c,
+                product_d, coeff_d
+            )
+
+            expect_yield_product_c, expect_yield_product_d = calculator.find_expected_yield()
+            print(f"The expected yield for {product_c} is: {expect_yield_product_c:.3f} grams")
+            # Doesn't print anything if product_d doesn't exist
+            if expect_yield_product_d is not None and expect_yield_product_d != 0: print(f"The expected yield for {product_d} is: {expect_yield_product_d:.3f} grams")
+
+        elif choice == 4:
 
             print("Dilution Calculator")
-            print("Provide three of the following four values (leave one blank):")
-            print("1. Concentration of Compound A (%), 2. Concentration of Compound B (%)")
-            print("3. Volume of Compound A (e.g., 100 mL, 1 L, 0.01 kL)")
-            print("4. Volume of Compound B (e.g., 500 mL, 2 L, 0.002 kL)")
 
             try:
                 # input compound concentration and volume.
-                conc_a = input("Concentration of Compound A (%): ").strip()
-                conc_b = input("Concentration of Compound B (%): ").strip()
-                vol_a = input("Volume of Compound A (e.g., 100 mL, 1 L, 0.01 kL): ").strip()
-                vol_b = input("Volume of Compound B (e.g., 500 mL, 2 L, 0.002 kL): ").strip()
+                conc_a = float(input("Concentration of Compound A (%): "))
+                conc_b = float(input("Concentration of Compound B (%): "))
+                vol_a = input("Volume of Compound A (e.g., 100 ): ")
+                vol_a = float(vol_a) if vol_a.strip() else None
+                unit_a = input("Enter the unit of volume (mL, L, kL): ")
+                vol_b = (input("Volume of Compound B (e.g., 500 ): "))
+                vol_b = float(vol_b) if vol_b.strip() else None
+                unit_b = input("Enter the unit of volume (mL, L, kL): ")
 
-                # Parse inputs
-                conc_a = float(conc_a) if conc_a else None
-                conc_b = float(conc_b) if conc_b else None
-                vol_a_value, vol_a_unit = (float(vol_a.split()[0]), vol_a.split()[1]) if vol_a else (None, None)
-                vol_b_value, vol_b_unit = (float(vol_b.split()[0]), vol_b.split()[1]) if vol_b else (None, None)
-
-                # Convert volumes to milliliters
-                vol_a = calculator.convert_volume_to_milliliters(vol_a_value, vol_a_unit) if vol_a_value else None
-                vol_b = calculator.convert_volume_to_milliliters(vol_b_value, vol_b_unit) if vol_b_value else None
+                calculator = DilutionCalculator(conc_a, conc_b, vol_a, vol_b, unit_a, unit_b)
 
                 # Calculate the missing value
-                result = calculator.compute_missing_value(conc_a, conc_b, vol_a, vol_b)
+                result = calculator.compute_missing_value()
 
                 if conc_a is None:
                     print(f"The concentration of Compound A is: {result:.2f}%.")
@@ -136,91 +144,71 @@ def main():
             except Exception as e:
                 print(f"An error occurred: {e}")
 
-        # Stoichiometry Calculator
-        elif calculator_choice == 4:
-            # Just calls the main function in Stoichiometry.py which contains the prompts
-            if __name__ == "__main__":
-                balancer = ChemicalEquationBalancer()
-                balancer.main()
+        elif choice == 5:
 
-        # Limiting Reactant Calculator
-        elif calculator_choice == 5:
-            print("Limiting Reactant Calculator")
+            print("Weight per weight solution calculator")
+            try:
+                # input compound weights and units.
+                compound_a = input("Weight of Compound A (solute, e.g., 10 ): ")
+                compound_a = float(compound_a) if compound_a.strip() else None
+                unit_a = input("Enter the unit of weight (mg, g, kg): ")
+                compound_b = input("Weight of Compound B (solvent, e.g., 100 ): ")
+                compound_b = float(compound_b) if compound_b.strip() else None
+                unit_b = input("Enter the unit of weight (mg, g, kg): ")
 
-            # Inputs for compound A. weight, units, and coefficient
-            compound_a = input("Enter Compound A: ")
-            weight_a = float(input(f"Enter the weight of {compound_a}: "))
-            unit_a = input("Enter the unit of weight (mg, g, kg): ")
-            coeff_a = int(input(f"Enter the molar coefficient of {compound_a}: "))
+                # input percent solution
+                percent_solution = input("Percent solution (w/w, e.g., 10): ")
+                percent_solution = float(percent_solution) if percent_solution.strip() else None
 
-            # Inputs for compound B. weight, units, and coefficient
-            compound_b = input("\nEnter Compound B: ")
-            weight_b = float(input(f"Enter the weight of {compound_b}: "))
-            unit_b = input("Enter the unit of weight (mg, g, kg): ")
-            coeff_b = int(input(f"Enter the molar coefficient of {compound_b}: "))
+                calculator = WeightPerWeight(compound_a, compound_b, percent_solution, unit_a, unit_b)
 
-            # Call LimitingReactant
-            calculator = LimitingReactant(
-                compound_a, weight_a, unit_a, coeff_a,
-                compound_b, weight_b, unit_b, coeff_b
-            )
+                # Calculate the fourth value that was left blank
+                result = calculator.compute_solution()
 
-            # Find the limiting reactant
-            limiting = calculator.find_limiting_reactant()
-            if limiting:
-                print(f"\nThe limiting reactant is: {limiting}")
-            else:
-                print("\nReactants are in perfect stoichiometric ratio.")
+                if compound_a is None:
+                    print(f"The weight of Compound A needed is: {result:.3f} grams.")
+                elif compound_b is None:
+                    print(f"The weight of Compound B needed is: {result:.3f} grams.")
+                elif percent_solution is None:
+                    print(f"The percent solution is: {result:.3f}%.")
+                else:
+                    print("Error: All inputs provided, but one should be left blank.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
-        elif calculator_choice == 6:
-            print("Expected Yield Calculator")
+        elif choice == 6:
 
-            # Inputs for compound A. weight, units, and coefficient
-            compound_a = input("Enter Compound A: ")
-            weight_a = float(input(f"Enter the weight of {compound_a}: "))
-            unit_a = input("Enter the unit of weight (mg, g, kg): ")
-            coeff_a = int(input(f"Enter the molar coefficient of {compound_a}: "))
+            print("Weight per volume solution calculator")
 
-            # Inputs for compound B. weight, units, and coefficient
-            compound_b = input("Enter Compound B: ")
-            weight_b = float(input(f"Enter the weight of {compound_b}: "))
-            unit_b = input("Enter the unit of weight (mg, g, kg): ")
-            coeff_b = int(input(f"Enter the molar coefficient of {compound_b}: "))
+            try:
+                # input the weight and volumes that will be used.
+                compound_a = input("Weight of solute (e.g., 10): ")
+                compound_a = float(compound_a) if compound_a.strip() else None
+                unit_a = input("Enter the unit of weight (mg, g, kg): ")
+                solvent_a = input("Volume of solvent (e.g., 100 ): ")
+                solvent_a = float(solvent_a) if solvent_a.strip() else None
+                unit_b = input("Enter the unit of volume (mL, L, kL): ")
+                percent_solution = input("Percent solution (w/v, e.g., 10): ")
+                percent_solution = float(percent_solution) if percent_solution.strip() else None
 
-            product_c = input("Enter product C: ")
-            coeff_c = int(input(f"Enter the molar coefficient of {product_c}: "))
+                calculator = WeightPerVolume(compound_a, solvent_a, percent_solution, unit_a, unit_b)
 
-            product_d = input("Enter product D: ")
-            if product_d:
-                try:
-                    coeff_d = int(input(f"Enter the molar coefficient of {product_d}: "))
-                except ValueError:
-                    print("Invalid input for the coefficient. Setting it to None.")
-                    coeff_d = None
-            else:
-                product_d = None
-                coeff_d = None
+                # Calculate the missing value
+                result = calculator.compute_solution()
 
-            # Call Expected Yield
-            calculator = ExpectedYieldCalculator(
-                compound_a, weight_a, unit_a, coeff_a,
-                compound_b, weight_b, unit_b, coeff_b,
-                product_c, coeff_c,
-                product_d, coeff_d
-            )
+                if compound_a is None:
+                    print(f"The weight of solute needed is: {result:.3f} grams.")
+                elif solvent_a is None:
+                    print(f"The volume of solvent needed is: {result:.3f} milliliters.")
+                elif percent_solution is None:
+                    print(f"The percent solution is: {result:.3f}%.")
+                else:
+                    print("Error: All inputs provided, but one should be left blank.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
-            # Find the expected yield and store in variables for output for product_c and product_d
-            expect_yield_product_c, expect_yield_product_d = calculator.find_expected_yield()
-            print(f"The expected yield for {product_c} is: {expect_yield_product_c:.3f} grams")
-            # Doesn't print anything if product_d doesn't exist
-            if expect_yield_product_d is not None: print(f"The expected yield for {product_d} is: {expect_yield_product_d:.3f} grams")
-
-        # Throws out error if 1 through 6 is not selected
         else:
-            print("Error")
-        # End the calculator program
-        choice = int(input("Press -1 to end the program: "))
-
+            print("Invalid choice. Please try again.")
 
 
 if __name__ == "__main__":

@@ -11,6 +11,7 @@ import tabStoichiometry as ts
 import tabExpectedYieldModules as te
 import tabWWSolution as tw
 import tabWVSolution as tv
+import tabMolecularWeight as mw
 
 class ChemistryCalculatorApp:
     """
@@ -53,6 +54,7 @@ class ChemistryCalculatorApp:
          A function that creates and adds tabs to the main tab view.
         """
         # Create tabs for different chemical operations
+        tabMolecularWeight = tabMain.add("Molecular Weight")
         tabStoichiometry = tabMain.add("Stoichiometry Reactants")
         tabLimitingReactants = tabMain.add("Limiting Reactants")
         tabExpectedYieldModules = tabMain.add("Expected Yield Modules")
@@ -61,13 +63,17 @@ class ChemistryCalculatorApp:
         tabWWSolutions = tabMain.add("W-W-Solutions")
         tabWVSolutions = tabMain.add("W-V-Solutions")
 
+
         # Add content to each tab
+        mw.tabMolecularWeight(tabMolecularWeight, "Molecular Weight")
         ts.tabStoichiometry(tabStoichiometry, "Stoichiometry Reactants")
         tl.tabLimitingReactants(tabLimitingReactants, "Limiting Reactants")
         te.tabExpectedYieldModules(tabExpectedYieldModules, "Expected Yield Modules")
         td.tabDilution(tabDilution, "Dilution")
         tw.tabWWSolutions(tabWWSolutions, "W/W Solution")
         tv.tabWVSolutions(tabWVSolutions, "W/V Solutions")
+
+
 
 
 if __name__ == "__main__":

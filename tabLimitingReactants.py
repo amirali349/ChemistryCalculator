@@ -148,7 +148,7 @@ def tabLimitingReactants(tabN,lbl):
         weight_a = float(txtCompoundAWeight.get().strip())
         unit_a = cboCompoundAUnits.get().strip()
         #coeff_a = float(txtCompoundACoefficient.get().strip())
-        molar_mass_a = float(cboMolarMassA.get().strip())
+        #molar_mass_a = float(cboMolarMassA.get().strip())
 
 
         # Inputs for compound B. weight, units, and coefficient
@@ -156,7 +156,7 @@ def tabLimitingReactants(tabN,lbl):
         weight_b = float(txtCompoundBWeight.get().strip())
         unit_b = cboCompoundBUnits.get().strip()
         #coeff_b = float(txtCompoundBCoefficient.get().strip())
-        molar_mass_b = float(cboMolarMassB.get().strip())
+        #molar_mass_b = float(cboMolarMassB.get().strip())
 
         product_c = cboCompoundCF.get().strip()
         product_d = cboCompoundDF.get().strip()
@@ -167,6 +167,8 @@ def tabLimitingReactants(tabN,lbl):
 
         coefficients = balancer.find_coefficients()
         coeff_a, coeff_b, coeff_c, coeff_d = coefficients.values()
+
+        molar_mass_a, molar_mass_b, molar_mass_c, molar_mass_d = balancer.find_molecular_weight()
 
         #print(f"Molar Mass a {molar_mass_a}")
         #print(f"Molar Mass b {molar_mass_b}")
@@ -209,7 +211,7 @@ def tabLimitingReactants(tabN,lbl):
 
     lblCompoundAUnits = customtkinter.CTkLabel(tabN, text="Units",width=300,font=("Helvetica",15))
     lblCompoundAUnits.pack()
-    cboCompoundAUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"],width=300,dropdown_font=("Helvetica",19))
+    cboCompoundAUnits = customtkinter.CTkOptionMenu(tabN, values=["Gram", "Milligram", "Kilogram"],width=300,dropdown_font=("Helvetica",19))
     cboCompoundAUnits.pack()
 
     # Create Variables to Store the Molar Mass from Database
@@ -241,7 +243,7 @@ def tabLimitingReactants(tabN,lbl):
 
     lblCompoundBUnits = customtkinter.CTkLabel(tabN, text="Units",font=("Helvetica",15))
     lblCompoundBUnits.pack()
-    cboCompoundBUnits = customtkinter.CTkOptionMenu(tabN, values=["Kilogram", "Gram", "Milligram"],width=300,dropdown_font=("Helvetica",19))
+    cboCompoundBUnits = customtkinter.CTkOptionMenu(tabN, values=["Gram", "Milligram", "Kilogram"],width=300,dropdown_font=("Helvetica",19))
     cboCompoundBUnits.pack()
 
     #lblCompoundBCoefficient = customtkinter.CTkLabel(tabN, text="Compound B Coefficient", font=("Helvetica", 15))
